@@ -163,7 +163,6 @@ describe( 'QlueDataSource', function() {
 	describe( "_fetchResults", function() {
 		var oldHttps;
 		var oldFilterResults;
-		var oldUpdateLastContributionIdFromBatch;
 
 		var dataCallback;
 		var endCallback;
@@ -174,7 +173,6 @@ describe( 'QlueDataSource', function() {
 		var filterResultsCalled;
 		var filterResultsReturnTrueOnce;
 		var generateRequestError;
-		var updateLastContributionIdFromBatchCalled;
 
 		before( function() {
 			oldHttps = qlueDataSource.https;
@@ -216,39 +214,30 @@ describe( 'QlueDataSource', function() {
 					return false;
 				}
 			};
-
-			oldUpdateLastContributionIdFromBatch = qlueDataSource._updateLastContributionIdFromBatch;
-			qlueDataSource._updateLastContributionIdFromBatch = function(){
-				updateLastContributionIdFromBatchCalled = true;
-			};
 		});
 
 		beforeEach( function() {
 			filterResultsCalled = 0;
 			filterResultsReturnTrueOnce = false;
 			generateRequestError = false;
-			updateLastContributionIdFromBatchCalled = false;
 		});
 
 		it( 'No results returned stops processing', function() {
 			httpsData = '{"result":[]}';
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 0 );
-			test.value( updateLastContributionIdFromBatchCalled ).is( true );
 		});
 
 		it( 'Invalid result object returned stops processing', function() {
 			httpsData = '{invalid-json}';
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 0 );
-			test.value( updateLastContributionIdFromBatchCalled ).is( true );
 		});
 
 		it( 'Valid result calls _filterResults', function() {
 			httpsData = '{"result":[{}]}';
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 1 );
-			test.value( updateLastContributionIdFromBatchCalled ).is( false );
 		});
 
 		it( 'Request error stops processing', function() {
@@ -256,23 +245,12 @@ describe( 'QlueDataSource', function() {
 			generateRequestError = true;
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 0 );
-			test.value( updateLastContributionIdFromBatchCalled ).is( true );
-
-		});
-
-		it( 'Multiple pages recurses', function() {
-			httpsData = '{"result":[{}]}';
-			filterResultsReturnTrueOnce = true;
-			qlueDataSource._fetchResults();
-			test.value( filterResultsCalled ).is( 2 );
-			test.value( updateLastContributionIdFromBatchCalled ).is( false );
 		});
 
 		// Restore/erase mocked functions
 		after( function(){
 			qlueDataSource.https = oldHttps;
 			qlueDataSource._filterResults = oldFilterResults;
-			qlueDataSource._updateLastContributionIdFromBatch = oldUpdateLastContributionIdFromBatch;
 		});
 
 	});
@@ -340,8 +318,8 @@ describe( 'QlueDataSource', function() {
 		it( 'Last processed ID is not updated from one batch with no filtered result', function() {
 			qlueDataSource.config.qlue.historicalLoadPeriod = 60000;
 			var results = [];
-			results.push( generateResult(1,new Date().getTime()) );
-			results.push( generateResult(2,new Date().getTime()) );
+			results.push( generateResult(1,new Date().getTime()-120000) );
+			results.push( generateResult(2,new Date().getTime())-120000 );
 			qlueDataSource._filterResults(results);
 			test.value( qlueDataSource._lastContributionId ).is( 0 );
 		});
@@ -352,7 +330,7 @@ describe( 'QlueDataSource', function() {
 			results.push( generateResult(1,new Date().getTime()) );
 			results.push( generateResult(2,new Date().getTime()) );
 			qlueDataSource._filterResults(results);
-			test.value( qlueDataSource._lastContributionId ).is( 0 );
+			test.value( qlueDataSource._lastContributionId ).is( 2 );
 			results = [];
 			results.push( generateResult(3,new Date().getTime()) );
 			results.push( generateResult(4,new Date().getTime()-120000) );
@@ -360,6 +338,7 @@ describe( 'QlueDataSource', function() {
 			test.value( qlueDataSource._lastContributionId ).is( 3 );
 		});
 
+		/* TODO This doesn't make sense - nothing is tripping an error here so there always be a result
 		it( 'Last processed ID is not updated during last batch of two with no filtered result', function() {
 			qlueDataSource.config.qlue.historicalLoadPeriod = 60000;
 			var results = [];
@@ -372,7 +351,7 @@ describe( 'QlueDataSource', function() {
 			results.push( generateResult(4,new Date().getTime()) );
 			qlueDataSource._filterResults(results);
 			test.value( qlueDataSource._lastContributionId ).is( 0 );
-		});
+		});*/
 
 		// Restore/erase mocked functions
 		after( function(){
