@@ -4,10 +4,10 @@ CREATE OR REPLACE FUNCTION public.update_all_reports_from_qlue()
 $BODY$
 	BEGIN
 		IF (TG_OP = 'UPDATE') THEN
-			INSERT INTO all_reports (fkey, created_at, text, source, lang, url, image_url, title, the_geom) SELECT NEW.pkey, NEW.created_at, NEW.text, 'qlue', NEW.url, NEW.image_url, NEW.title, NEW.the_geom;
+			INSERT INTO all_reports (fkey, created_at, text, source, lang, image_url, title, the_geom) SELECT NEW.pkey, NEW.created_at, NEW.text, 'qlue', NEW.lang, NEW.image_url, NEW.title, NEW.the_geom;
 			RETURN NEW;
 		ELSIF (TG_OP = 'INSERT') THEN
-			INSERT INTO all_reports (fkey, created_at, text, source, lang, url, image_url, title, the_geom) SELECT NEW.pkey, NEW.created_at, NEW.text, 'qlue', NEW.lang, NEW.url, NEW.image_url, NEW.title, NEW.the_geom;
+			INSERT INTO all_reports (fkey, created_at, text, source, lang, image_url, title, the_geom) SELECT NEW.pkey, NEW.created_at, NEW.text, 'qlue', NEW.lang, NEW.image_url, NEW.title, NEW.the_geom;
 			RETURN NEW;
 		END IF;
 	END;
@@ -27,7 +27,6 @@ CREATE TABLE qlue_reports
   created_at timestamp with time zone,
   text character varying,
   lang character varying,
-  url character varying,
   image_url character varying,
   title character varying,
   CONSTRAINT pkey_qlue PRIMARY KEY (pkey)
