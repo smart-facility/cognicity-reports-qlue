@@ -6,7 +6,7 @@
  * Configuration for cognicity-reports-powertrack
  * @namespace {object} config
  * @property {object} qlue Configuration object for Qlue web service interface
- * @property {string} qlue.serviceURL The URL for the Qlue web service, including topic ID and not including page number
+ * @property {string} qlue.serviceURL The URL for the Qlue web service
  * @property {number} qlue.pollInterval Poll interval for web service in milliseconds
  * @property {number} qlue.historicalLoadPeriod Maximum age in milliseconds of reports which will be processed
  */
