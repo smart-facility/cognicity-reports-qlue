@@ -1,4 +1,4 @@
-INSERT INTO detik_reports (
+INSERT INTO qlue_reports (
   post_id,
   created_at,
   text,
