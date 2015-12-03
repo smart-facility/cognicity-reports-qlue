@@ -10,7 +10,7 @@
  */
 
 var QlueDataSource = require('./QlueDataSource');
-var config = require('./live-qlue-config');
+var config = require('./sample-qlue-config');
 
 /**
  * The constructor function we expose takes a reports object and returns an instance of this
