@@ -12,18 +12,11 @@ var QlueDataSource = function QlueDataSource(
 		config
 	){
 
-	// Store references to reports and logger
+	// Store references to constructor arguments
 	this.reports = reports;
 	this.logger = reports.logger;
-
-	// Copy reports config into our own config
-	this.config = reports.config;
-	for (var prop in config) {
-		if (config.hasOwnProperty(prop)) {
-			this.config[prop] = config[prop];
-		}
-	}
-
+	this.config = config;
+	
 	this.http = require('http');
 
 	// Set constructor reference (used to print the name of this data source)
@@ -34,7 +27,7 @@ QlueDataSource.prototype = {
 
 	/**
 	 * Data source configuration.
-	 * This contains the reports configuration and the data source specific configuration.
+	 * This contains the data source specific configuration.
 	 * @type {object}
 	 */
 	config: {},

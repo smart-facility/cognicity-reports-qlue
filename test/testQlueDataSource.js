@@ -44,26 +44,6 @@ qlueDataSource.reports.logger = qlueDataSource.logger;
 // Test harness for CognicityReportsPowertrack object
 describe( 'QlueDataSource', function() {
 
-	describe( "constructor", function() {
-
-		it( 'Config is merged from reports with data source', function() {
-			var dds = new QlueDataSource(
-				{
-					config: {
-						jupiter: "europa"
-					}
-				},
-				{
-					saturn: "enceladus"
-				}
-			);
-
-			test.value( dds.config.jupiter ).is( 'europa' );
-			test.value( dds.config.saturn ).is( 'enceladus' );
-		});
-
-	});
-
 	describe( "cacheMode", function() {
 		beforeEach( function() {
 			qlueDataSource._cachedData = [];
