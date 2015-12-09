@@ -16,7 +16,7 @@ var QlueDataSource = function QlueDataSource(
 	this.reports = reports;
 	this.logger = reports.logger;
 	this.config = config;
-	
+
 	this.http = require('http');
 
 	// Set constructor reference (used to print the name of this data source)
@@ -209,7 +209,7 @@ QlueDataSource.prototype = {
 			qlueReport.post_images = null;
 		}
 		else {
-			qlueReport.post_images = qlueReport.post_images.replace("'\'","");
+			qlueReport.post_images = qlueReport.post_images.replace("'\'","").replace('http://','https://');
 		}
 
 		// Fix language code for this data type
