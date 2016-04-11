@@ -6,7 +6,6 @@
   "preferGlobal": false,
   "private": true,
   "dependencies": {
-    "gnip": "^0.2.1"
   },
   "devDependencies": {
     "jsdoc": "^3.2.0",
@@ -22,7 +21,7 @@
     "test": "npm run jshint && npm run mocha",
     "jshint": "jshint index.js QlueDataSource.js sample-qlue-config.js test/testQlueDataSource.js",
     "mocha": "mocha test",
-    "build-docs": "jsdoc -d docs package.json index.js sample-detik-config.js QlueDataSource.js",
+    "build-docs": "jsdoc -d docs package.json index.js sample-qlue-config.js QlueDataSource.js",
     "build": "npm test && npm run build-docs && npm run coverage",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha"
   }
