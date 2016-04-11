@@ -5,7 +5,7 @@
  * Poll the specified Qlue feed for new data and send it to the reports application.
  * @constructor
  * @param {Reports} reports An instance of the reports object.
- * @param {object} config Gnip powertrack specific configuration.
+ * @param {object} config Qlue specific configuration.
  */
 var QlueDataSource = function QlueDataSource(
 		reports,
@@ -88,8 +88,7 @@ QlueDataSource.prototype = {
 	},
 
 	/**
-	 * Fetch one results
-	 * Call the callback function on the results
+	 * Fetch and process the results.
 	 */
 	_fetchResults: function() {
 		var self = this;
@@ -136,8 +135,8 @@ QlueDataSource.prototype = {
 	},
 
 	/**
-	 * Process the passed result objects
-	 * Stop processing if we've seen a result before, or if the result is too old
+	 * Process the passed result objects.
+	 * Stop processing if we've seen a result before, or if the result is too old.
 	 * @param {Array} results Array of result objects from the Qlue data to process
 	 */
 	_filterResults: function( results ) {
@@ -185,7 +184,7 @@ QlueDataSource.prototype = {
 
 	/**
 	 * Save a result to cognicity server.
-	 * @param {object} result The result object from the web service
+	 * @param {object} result The result object from the web service.
 	 */
 	_saveResult: function( result ) {
 		 var self = this;
@@ -197,9 +196,9 @@ QlueDataSource.prototype = {
 	},
 
 	/**
-	* Insert a confirmed report - i.e. has geo coordinates
-	* Store both the qlue report and the user hash
-	* @param {qlueReport} qlueReport Qlue report object
+	* Insert a confirmed report - i.e. has geo coordinates.
+	* Store both the qlue report and the user hash.
+	* @param {qlueReport} qlueReport Qlue report object.
 	*/
 	_insertConfirmed: function( qlueReport ) {
 		var self = this;
@@ -257,8 +256,8 @@ QlueDataSource.prototype = {
 	},
 
 	/**
-	* Get the last contribution ID as stored in the database
-	* Update _lastContributionId
+	* Get the last contribution ID as stored in the database.
+	* Update _lastContributionId.
 	*/
 	_updateLastContributionIdFromDatabase: function() {
 		var self = this;
@@ -281,10 +280,8 @@ QlueDataSource.prototype = {
 	},
 
 	/**
-	 * Connect the Gnip stream.
-	 * Establish the network connection, push rules to Gnip.
-	 * Setup error handlers and timeout handler.
-	 * Handle events from the stream on incoming data.
+	 * Start reading Qlue data.
+	 * Fetch data now and start polling to keep receiving data.
 	 */
 	start: function(){
 		var self = this;

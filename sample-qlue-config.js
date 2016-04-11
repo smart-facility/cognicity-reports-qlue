@@ -9,6 +9,9 @@
  * @property {string} qlue.serviceURL The URL for the Qlue web service
  * @property {number} qlue.pollInterval Poll interval for web service in milliseconds
  * @property {number} qlue.historicalLoadPeriod Maximum age in milliseconds of reports which will be processed
+ * @property {object} dims.pg Postgres configuration
+ * @property {string} dims.pg.table_qlue Database table to store qlue reports in
+ * @property {string} dims.pg.table_qlue_users Database table to store qlue report users in
  */
 var config = {};
 
