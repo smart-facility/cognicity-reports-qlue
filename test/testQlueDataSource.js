@@ -14,12 +14,8 @@ var reports = {
 
 // Mock result
 var result = {
-	location:{
-		geospatial:{
-			longitude:0,
-			latitude:0
-		}
-	}
+	loc_lng: 0,
+	loc_lat: 0
 };
 
 // Create server with empty objects
@@ -141,22 +137,22 @@ describe( 'QlueDataSource', function() {
 	});
 
 	describe( "_fetchResults", function() {
-		var oldHttps;
+		var oldHttp;
 		var oldFilterResults;
 
 		var dataCallback;
 		var endCallback;
 		var errorCallback;
 
-		var httpsData;
+		var httpData;
 
 		var filterResultsCalled;
 		var filterResultsReturnTrueOnce;
 		var generateRequestError;
 
 		before( function() {
-			oldHttps = qlueDataSource.https;
-			qlueDataSource.https = {
+			oldHttp = qlueDataSource.http;
+			qlueDataSource.http = {
 				request: function(url, callback){
 					var res = {
 						setEncoding: function(){},
@@ -175,7 +171,7 @@ describe( 'QlueDataSource', function() {
 							if (generateRequestError) {
 								errorCallback({message:'foo',stack:'bar'});
 							} else {
-								dataCallback(httpsData);
+								dataCallback(httpData);
 								endCallback();
 							}
 						}
@@ -203,25 +199,25 @@ describe( 'QlueDataSource', function() {
 		});
 
 		it( 'No results returned stops processing', function() {
-			httpsData = '{"result":[]}';
+			httpData = '[]';
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 0 );
 		});
 
 		it( 'Invalid result object returned stops processing', function() {
-			httpsData = '{invalid-json}';
+			httpData = '[invalid-json]';
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 0 );
 		});
 
 		it( 'Valid result calls _filterResults', function() {
-			httpsData = '{"result":[{}]}';
+			httpData = '[{}]';
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 1 );
 		});
 
 		it( 'Request error stops processing', function() {
-			httpsData = '{"result":[{}]}';
+			httpData = '[{}]';
 			generateRequestError = true;
 			qlueDataSource._fetchResults();
 			test.value( filterResultsCalled ).is( 0 );
@@ -229,7 +225,7 @@ describe( 'QlueDataSource', function() {
 
 		// Restore/erase mocked functions
 		after( function(){
-			qlueDataSource.https = oldHttps;
+			qlueDataSource.http = oldHttp;
 			qlueDataSource._filterResults = oldFilterResults;
 		});
 
@@ -238,14 +234,10 @@ describe( 'QlueDataSource', function() {
 	describe( "_filterResults", function() {
 		var processedResults = [];
 
-		function generateResult( contributionId, date ) {
+		function generateResult( id, date ) {
 			return {
-				contributionId: contributionId,
-				date: {
-					update: {
-						sec: date / 1000
-					}
-				}
+				post_id: id,
+				post_date: new Date(date).toISOString().replace('Z','')
 			};
 		}
 
@@ -264,14 +256,14 @@ describe( 'QlueDataSource', function() {
 		it( 'New result is processed', function() {
 			var results = [];
 			test.value( processedResults.length ).is( 0 );
-			results.push( generateResult(1,1) );
+			results.push( generateResult(1, new Date().getTime()) );
 			qlueDataSource._filterResults(results);
 			test.value( processedResults.length ).is( 1 );
 		});
 
 		it( 'Already processed result is not processed', function() {
 			var results = [];
-			results.push( generateResult(1,1) );
+			results.push( generateResult(1, new Date().getTime()) );
 			qlueDataSource._filterResults(results);
 			qlueDataSource._filterResults(results);
 			test.value( processedResults.length ).is( 1 );
@@ -288,8 +280,8 @@ describe( 'QlueDataSource', function() {
 		it( 'Last processed ID is updated from one batch', function() {
 			qlueDataSource.config.qlue.historicalLoadPeriod = 60000;
 			var results = [];
-			results.push( generateResult(1,new Date().getTime()) );
-			results.push( generateResult(2,new Date().getTime()-120000) );
+			results.push( generateResult(1,new Date().getTime() + 7*60*60*1000) );
+			results.push( generateResult(2,new Date().getTime()-120000 + 7*60*60*1000) );
 			test.value( qlueDataSource._lastContributionId ).is( 0 );
 			qlueDataSource._filterResults(results);
 			test.value( qlueDataSource._lastContributionId ).is( 1 );
@@ -299,7 +291,7 @@ describe( 'QlueDataSource', function() {
 			qlueDataSource.config.qlue.historicalLoadPeriod = 60000;
 			var results = [];
 			results.push( generateResult(1,new Date().getTime()-120000) );
-			results.push( generateResult(2,new Date().getTime())-120000 );
+			results.push( generateResult(2,new Date().getTime()-120000) );
 			qlueDataSource._filterResults(results);
 			test.value( qlueDataSource._lastContributionId ).is( 0 );
 		});
@@ -307,13 +299,13 @@ describe( 'QlueDataSource', function() {
 		it( 'Last processed ID is updated during last batch of two', function() {
 			qlueDataSource.config.qlue.historicalLoadPeriod = 60000;
 			var results = [];
-			results.push( generateResult(1,new Date().getTime()) );
-			results.push( generateResult(2,new Date().getTime()) );
+			results.push( generateResult(1,new Date().getTime() + 7*60*60*1000) );
+			results.push( generateResult(2,new Date().getTime() + 7*60*60*1000) );
 			qlueDataSource._filterResults(results);
 			test.value( qlueDataSource._lastContributionId ).is( 2 );
 			results = [];
-			results.push( generateResult(3,new Date().getTime()) );
-			results.push( generateResult(4,new Date().getTime()-120000) );
+			results.push( generateResult(3,new Date().getTime() + 7*60*60*1000) );
+			results.push( generateResult(4,new Date().getTime()-120000 + 7*60*60*1000) );
 			qlueDataSource._filterResults(results);
 			test.value( qlueDataSource._lastContributionId ).is( 3 );
 		});
