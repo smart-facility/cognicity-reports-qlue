@@ -310,21 +310,6 @@ describe( 'QlueDataSource', function() {
 			test.value( qlueDataSource._lastContributionId ).is( 3 );
 		});
 
-		/* TODO This doesn't make sense - nothing is tripping an error here so there always be a result
-		it( 'Last processed ID is not updated during last batch of two with no filtered result', function() {
-			qlueDataSource.config.qlue.historicalLoadPeriod = 60000;
-			var results = [];
-			results.push( generateResult(1,new Date().getTime()) );
-			results.push( generateResult(2,new Date().getTime()) );
-			qlueDataSource._filterResults(results);
-			test.value( qlueDataSource._lastContributionId ).is( 0 );
-			results = [];
-			results.push( generateResult(3,new Date().getTime()) );
-			results.push( generateResult(4,new Date().getTime()) );
-			qlueDataSource._filterResults(results);
-			test.value( qlueDataSource._lastContributionId ).is( 0 );
-		});*/
-
 		// Restore/erase mocked functions
 		after( function(){
 			qlueDataSource.config.qlue = {};
