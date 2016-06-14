@@ -6,6 +6,9 @@ CogniCity
 
 Travis build status: [![Build Status](https://travis-ci.org/smart-facility/cognicity-reports-qlue.svg?branch=master)](https://travis-ci.org/smart-facility/cognicity-reports-qlue)
 
+DOI for current stable release [v2.0.0](https://github.com/smart-facility/cognicity-reports-qlue/releases/tag/v2.0.0):
+[![DOI](https://zenodo.org/badge/19201/smart-facility/cognicity-reports-qlue.svg)](https://zenodo.org/badge/latestdoi/19201/smart-facility/cognicity-reports-qlue)
+
 ### About
 Cognicity-reports-qlue is the NodeJS reports module for collecting flood reports from the QLUE API. For detailed framework documentation see [http://cognicity.info](http://cognicity.info).
 This module is not designed to be run standalone but is designed to be run as a submodule of [cognicity-reports](https://github.com/smart-facility/cognicity-reports), which can run just with this submodule alone.
